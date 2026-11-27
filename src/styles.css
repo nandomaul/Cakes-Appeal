@@ -30,6 +30,7 @@
 [hidden] { display: none !important; }
 .demo-only { display: none !important; }
 [data-demo] .demo-only:not([hidden]) { display: revert !important; }
+[data-demo] .purchase-button.demo-only:not([hidden]) { display: inline-flex !important; }
 [data-demo] .store-only { display: none !important; }
 [data-demo] .store-only-copy { display: none !important; }
 .demo-notice {
@@ -311,6 +312,7 @@ h1 { font-size: clamp(23px, 6.7vw, 34px); font-weight: 680; line-height: 1.07; }
 .contact-icons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
 .contact-icons .icon-button { color: #873f22; text-decoration: none; }
 .contact-icons .icon { width: 23px; height: 23px; }
+.whatsapp-icon { display: block; flex: 0 0 23px; width: 23px; height: 23px; }
 
 .dock {
   position: fixed;
@@ -496,6 +498,7 @@ summary::-webkit-details-marker { display: none; }
 summary::after { content: ""; flex: 0 0 7px; height: 7px; margin-right: 4px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; rotate: 45deg; translate: 0 -2px; }
 details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
 .detail-grid { display: grid; gap: 8px; }
+.order-contact { margin-top: 11px; }
 
 .cart-items { display: grid; gap: 6px; padding: 0; margin-bottom: 9px; list-style: none; }
 .cart-line {
@@ -539,6 +542,15 @@ details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
 .bar-note { grid-column: 1 / -1; color: var(--muted); font-size: 10px; line-height: 1.25; }
 .continue-button { min-width: 132px; }
 .purchase-button { min-width: 132px; }
+.purchase-button .whatsapp-icon {
+  box-sizing: content-box;
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+  padding: 2px;
+  border-radius: 50%;
+  background: white;
+}
 .purchase-button[aria-disabled="true"] { background: #eee2d7; color: #66544a; cursor: default; }
 .purchase-window time { font-weight: 650; }
 #buy-countdown { font-variant-numeric: tabular-nums; }
@@ -617,7 +629,7 @@ details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
   .sheet-handle { visibility: hidden; margin-top: 7px; }
   .close-button { top: 12px; right: 16px; }
   .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .detail-grid .full { grid-column: 1 / -1; }
+  .detail-grid .full, .order-contact .field { grid-column: 1 / -1; }
   .decor-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 

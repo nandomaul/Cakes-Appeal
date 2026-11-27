@@ -64,10 +64,8 @@ function updateBuyWindow() {
     countdown.textContent = " · Akses pembelian berakhir.";
     purchaseControl.setAttribute("aria-disabled", "true");
     purchaseControl.querySelector(".purchase-label").textContent = "Akses berakhir";
-    if (isDemo) {
-      demoOrder.disabled = true;
-    } else {
-      sendOrder.removeAttribute("href");
+    purchaseControl.removeAttribute("href");
+    if (!isDemo) {
       whatsappContact.removeAttribute("href");
       whatsappContact.hidden = true;
       copyOrder.hidden = true;
@@ -366,12 +364,15 @@ delivery.addEventListener("change", () => { find("#cart-total").value = rupiah(c
 dateInput.addEventListener("input", () => showDateError());
 function checkoutDetails(fields, order) {
   const details = [
+    ["Nama pemesan", fields.get("customer").trim() || "Belum diisi"],
+    ["Alamat kirim", fields.get("address").trim() || "Belum diisi"],
+    ["Catatan tambahan", fields.get("notes").trim() || "—"],
     ["Tanggal acara", formatDate(fields.get("date"))],
     ["Pengiriman", order.delivery.label + (order.delivery.price ? " (+" + rupiah(order.delivery.price) + ")" : "")],
   ];
   for (const [key, label] of [
-    ["inscription", "Tulisan di kue"], ["customer", "Nama pemesan"], ["phone", "HP pemesan"],
-    ["address", "Alamat kirim"], ["recipient", "Nama penerima"], ["recipientPhone", "HP penerima"],
+    ["inscription", "Tulisan di kue"], ["phone", "HP pemesan"],
+    ["recipient", "Nama penerima"], ["recipientPhone", "HP penerima"],
   ]) {
     const value = fields.get(key).trim();
     if (value) details.push([label, value]);
@@ -380,7 +381,8 @@ function checkoutDetails(fields, order) {
 }
 
 function orderMessage(order, details, pendingShipping) {
-  const text = ["Halo Cakes Appeal! Saya mau pesan:", ""];
+  const greeting = isDemo ? "SIMULASI CAKES APPEAL — contoh draf pesanan." : "Halo Cakes Appeal! Saya mau pesan:";
+  const text = [greeting, ""];
   for (const [index, { product, variant, quantity, amount }] of order.items.entries()) {
     text.push((index + 1) + ". " + product.name + " (" + product.series + ") ×" + quantity);
     if (product.note) text.push("   " + product.note);
@@ -391,9 +393,13 @@ function orderMessage(order, details, pendingShipping) {
   }
   for (const [label, value] of details) text.push(label + ": " + value);
   const shippingNote = pendingShipping ? " (belum termasuk ongkir)" : "";
-  text.push("Estimasi: " + rupiah(order.total) + shippingNote, "",
-    "Boleh dicek ketersediaan tanggal dan total akhirnya? Terima kasih!");
+  text.push("Estimasi: " + rupiah(order.total) + shippingNote);
+  if (!isDemo) text.push("", "Boleh dicek ketersediaan tanggal dan total akhirnya? Terima kasih!");
   return text.join("\n");
+}
+
+function whatsappDraft(base, text) {
+  return base + "?text=" + encodeURIComponent(text);
 }
 
 function renderReview(fields, order) {
@@ -419,13 +425,11 @@ function renderReview(fields, order) {
   find("#review-total").value = rupiah(order.total);
   find("#review-shipping-note").hidden = !pendingShipping;
   const available = updateBuyWindow();
-  if (sendOrder && available) {
-    const whatsapp = new URL(whatsappContact.dataset.waUrl);
-    whatsapp.searchParams.set("text", orderMessage(order, details, pendingShipping));
-    sendOrder.href = whatsapp.href;
-    sendOrder.removeAttribute("aria-disabled");
+  if (available) {
+    const destination = isDemo ? "https://wa.me/" : whatsappContact.dataset.waUrl;
+    purchaseControl.href = whatsappDraft(destination, orderMessage(order, details, pendingShipping));
+    purchaseControl.removeAttribute("aria-disabled");
   }
-  find("#demo-order-status").hidden = true;
   copyStatus.textContent = "";
 }
 
@@ -467,17 +471,17 @@ async function closeSheet() {
   updateDock(destination);
 }
 find("#close-sheet").addEventListener("click", closeSheet);
-demoOrder.addEventListener("click", () => {
-  if (updateBuyWindow()) find("#demo-order-status").hidden = false;
-});
+function checkBeforeOpening(event) {
+  if (!updateBuyWindow()) event.preventDefault();
+}
 
+purchaseControl.addEventListener("click", checkBeforeOpening);
 if (!isDemo) {
-  const checkBeforeOpening = (event) => {
-    if (!updateBuyWindow()) event.preventDefault();
-  };
   whatsappContact.addEventListener("click", checkBeforeOpening);
-  sendOrder.addEventListener("click", checkBeforeOpening);
-  if (updateBuyWindow()) whatsappContact.href = whatsappContact.dataset.waUrl;
+  if (updateBuyWindow()) {
+    whatsappContact.href = whatsappDraft(whatsappContact.dataset.waUrl,
+      "Halo Cakes Appeal! Saya mau tanya tentang menu dan pemesanan.");
+  }
 }
 if (updateBuyWindow()) {
   const timer = setInterval(() => {

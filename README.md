@@ -23,7 +23,7 @@ Untuk update, commit dan push perubahan. Klik **Run workflow** lagi. Workflow me
 
 Gambar share 1200 × 630 ada di `assets/images/share-cakes-appeal-v2.jpg`. Meta Open Graph memakai URL GitHub Pages. Setelah update terbit, coba tempel ulang link di WhatsApp. Jika preview lama masih muncul, coba tambahkan `?v=2`.
 
-Tombol **Beli sekarang** aktif sampai **4 Desember 2026 pukul 00.00 WIB**. Demo Pages menampilkan simulasi. Build toko membuka draf WhatsApp dan tombol kontak WhatsApp dari halaman ikut dinonaktifkan saat waktu habis. Katalog tetap dapat dilihat. Countdown mengikuti jam perangkat.
+Tombol **Beli sekarang** aktif sampai **4 Desember 2026 pukul 00.00 WIB**. Demo Pages membuka draf berlabel simulasi dan memberi pilihan kontak di WhatsApp. Build toko membuka draf langsung ke kontak Cakes Appeal dan tombol kontak WhatsApp dari halaman ikut dinonaktifkan saat waktu habis. Katalog tetap dapat dilihat. Countdown mengikuti jam perangkat.
 
 ## Deploy versi toko
 
