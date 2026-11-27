@@ -1,36 +1,29 @@
-# Cakes Appeal · Preview
+# Cakes Appeal
 
-Proyek ini menyiapkan dua hasil build dari tampilan V4. `npm run build` menghasilkan demo interaktif di `dist/`. `npm run build:store` menghasilkan versi toko dengan pemesanan WhatsApp di `dist-store/`. GitHub Pages membatasi penggunaan situs untuk transaksi komersial. [GitHub Pages usage limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
+## Jalankan toko
 
-## Tes lokal
+```bash
+npm run dev
+```
+
+Buka alamat yang tercetak di Terminal. **Pesan sekarang** membuka pilihan kue. Setelah mengecek ringkasan, **Beli sekarang** membuka draf langsung ke kontak WhatsApp Cakes Appeal. Nama, alamat, catatan, dan rincian produk ikut terisi.
+
+## Publikasikan toko
 
 ```bash
 npm run build
-npm run preview
 ```
 
-Buka alamat yang tercetak di Terminal. Build dan preview menggunakan Node.js. Untuk cek hasil build toko, jalankan `npm run build:store` lalu `npm run preview -- --store`.
+Unggah folder `dist/` lewat [Netlify Drop](https://app.netlify.com/drop). Jalankan `npm run preview` untuk menguji build di Mac. Jika sudah punya URL toko, gunakan `CAKES_APPEAL_SITE_URL=https://alamat-situs-lo/ npm run build` supaya metadata share memakai URL tersebut. `npm run build:store` juga tersedia dan menulis hasilnya ke `dist-store/`.
 
-## Deploy demo ke GitHub Pages
+Ikon WhatsApp di footer membuka draf pertanyaan tentang menu.
 
-1. Salin isi update ke checkout `nandomaul/Cakes-Appeal`, lalu jalankan `npm run build`, commit perubahan, dan push ke default branch. Folder `dist/` dihasilkan ulang saat workflow berjalan.
-2. Di GitHub buka **Settings → Pages**, lalu pilih **Source → GitHub Actions**. [Dokumentasi publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
-3. Buka **Actions → Deploy Cakes Appeal Demo → Run workflow**. Pilih `main` atau default branch yang lo pakai. Setelah run sukses, buka URL dari hasil deployment. [Cara menjalankan workflow manual](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow)
+## Katalog GitHub Pages
 
-Untuk update, commit dan push perubahan. Klik **Run workflow** lagi. Workflow membangun dan mengunggah `dist/` dari commit yang dipilih.
-
-## Preview link dan batas pembelian
-
-Gambar share 1200 × 630 ada di `assets/images/share-cakes-appeal-v2.jpg`. Meta Open Graph memakai URL GitHub Pages. Setelah update terbit, coba tempel ulang link di WhatsApp. Jika preview lama masih muncul, coba tambahkan `?v=2`.
-
-Tombol **Beli sekarang** aktif sampai **4 Desember 2026 pukul 00.00 WIB**. Demo Pages membuka draf berlabel simulasi dan memberi pilihan kontak di WhatsApp. Build toko membuka draf langsung ke kontak Cakes Appeal dan tombol kontak WhatsApp dari halaman ikut dinonaktifkan saat waktu habis. Katalog tetap dapat dilihat. Countdown mengikuti jam perangkat.
-
-## Deploy versi toko
-
-Jalankan `npm run build:store`. Kalau URL hosting toko sudah diketahui, gunakan `CAKES_APPEAL_SITE_URL=https://alamat-situs-lo/ npm run build:store` supaya gambar share dan URL Open Graph ikut mengarah ke sana. Untuk publikasi manual dengan Netlify Drop, unggah folder `dist-store/`. Uji keranjang sampai WhatsApp membuka draf pesanan. Pembeli yang mengirim pesan dari WhatsApp. [Panduan Netlify Drop](https://docs.netlify.com/start/quickstarts/netlify-drop-quickstart/)
+Workflow **Deploy Cakes Appeal Catalog** memakai `npm run build:pages` dan menerbitkan `dist-pages/`. Katalog berisi produk dan estimasi, dengan tautan WhatsApp, LINE, dan Instagram di footer. Setelah commit dan push, buka [workflow Pages](https://github.com/nandomaul/Cakes-Appeal/actions/workflows/pages.yml) dan pilih **Run workflow** jika sumber Pages adalah GitHub Actions. [Batas penggunaan GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
 
 ## Edit proyek
 
-`npm run dev` menjalankan proyek V4 untuk pengembangan. `src/catalog.js` berisi daftar produk, harga, dan varian. Logo ada di `assets/logo.png` dan foto di `assets/images/`.
+`src/catalog.js` berisi daftar produk, harga, dan varian. Logo ada di `assets/logo.png`, foto di `assets/images/`, dan gambar share di `assets/images/share-cakes-appeal-v3.jpg`.
 
-Jika lo edit sumber animasi `src/motion.tailwind.css`, jalankan `npm install` sekali lalu `npm run build:motion` untuk memperbarui CSS yang dipakai build.
+Jika sumber animasi `src/motion.tailwind.css` berubah, jalankan `npm install` sekali lalu `npm run build:motion` untuk memperbarui CSS.

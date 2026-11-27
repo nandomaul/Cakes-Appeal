@@ -2,8 +2,9 @@ import { cp, mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/pro
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = new URL("../", import.meta.url);
-const store = process.argv.includes("--store");
-const output = new URL(store ? "dist-store/" : "dist/", root);
+const catalog = process.argv.includes("--pages");
+const legacyStore = process.argv.includes("--store");
+const output = new URL(catalog ? "dist-pages/" : legacyStore ? "dist-store/" : "dist/", root);
 const assets = ["styles.css", "motion.css", "app.js", "cart.js", "catalog.js", "Tailwind-MIT.txt"];
 let template = await readFile(new URL("index.html", root), "utf8");
 const siteUrl = process.env.CAKES_APPEAL_SITE_URL;
@@ -14,11 +15,13 @@ if (siteUrl) {
   }
   published.pathname = published.pathname.replace(/\/?$/, "/");
   template = template.replaceAll("https://nandomaul.github.io/Cakes-Appeal/", published.href);
+} else if (!catalog) {
+  template = template.replace(/^  (?:<link rel="canonical"|<meta property="og:url")[^\n]+\n/gm, "");
 }
 
-const html = store
-  ? template.replace('<html lang="id" data-demo>', '<html lang="id">')
-  : template.replace(/^[ \t]*<!-- store-only -->[\s\S]*?<!-- \/store-only -->[ \t]*\r?\n/gm, "");
+const html = catalog
+  ? template.replace(/^[ \t]*<!-- store-only -->[\s\S]*?<!-- \/store-only -->[ \t]*\r?\n/gm, "")
+  : template.replace('<html lang="id" data-catalog>', '<html lang="id">');
 
 const work = await mkdtemp(fileURLToPath(new URL(".build-", root)));
 const staging = pathToFileURL(work + "/");
@@ -39,4 +42,4 @@ try {
   await rm(staging, { recursive: true, force: true });
 }
 
-console.log((store ? "Build toko" : "Build demo") + " siap di " + fileURLToPath(output));
+console.log((catalog ? "Build katalog" : "Build toko") + " siap di " + fileURLToPath(output));

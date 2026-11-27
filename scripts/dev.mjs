@@ -5,14 +5,16 @@ import { fileURLToPath } from "node:url";
 
 const preview = process.argv.includes("--preview");
 const store = process.argv.includes("--store");
-const webRoot = new URL(preview ? (store ? "../dist-store/" : "../dist/") : "../", import.meta.url);
+const catalog = process.argv.includes("--pages");
+const output = catalog ? "../dist-pages/" : store ? "../dist-store/" : "../dist/";
+const webRoot = new URL(preview ? output : "../", import.meta.url);
 const root = fileURLToPath(webRoot);
 
 if (preview) {
   try {
     await access(new URL("index.html", webRoot));
   } catch {
-    const command = store ? "npm run build:store" : "npm run build";
+    const command = catalog ? "npm run build:pages" : store ? "npm run build:store" : "npm run build";
     console.error("Build belum ada. Jalankan " + command + " terlebih dahulu.");
     process.exit(1);
   }
@@ -24,6 +26,7 @@ const types = {
   ".jpg": "image/jpeg",
   ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".webp": "image/webp",
   ".woff": "font/woff",
 };
 const portFlag = process.argv.indexOf("--port");
@@ -40,7 +43,7 @@ const server = createServer(async (req, res) => {
     }
     let body = await readFile(file);
     if (!preview && (pathname === "/" || pathname === "/index.html")) {
-      body = body.toString("utf8").replace('<html lang="id" data-demo>', '<html lang="id">');
+      body = body.toString("utf8").replace('<html lang="id" data-catalog>', '<html lang="id">');
     }
     res.writeHead(200, { "Content-Type": type, "Cache-Control": "no-cache" });
     res.end(req.method === "HEAD" ? undefined : body);

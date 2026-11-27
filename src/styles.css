@@ -28,22 +28,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-.demo-only { display: none !important; }
-[data-demo] .demo-only:not([hidden]) { display: revert !important; }
-[data-demo] .purchase-button.demo-only:not([hidden]) { display: inline-flex !important; }
-[data-demo] .store-only { display: none !important; }
-[data-demo] .store-only-copy { display: none !important; }
-.demo-notice {
-  width: fit-content;
-  margin: 0 0 8px;
-  padding: 5px 9px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 650;
-}
+[data-catalog] .store-only { display: none !important; }
 body, h1, h2, h3, p, figure, fieldset, ul { margin: 0; }
 img { display: block; max-width: 100%; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -306,13 +291,12 @@ h1 { font-size: clamp(23px, 6.7vw, 34px); font-weight: 680; line-height: 1.07; }
 .no-results { grid-column: 1 / -1; padding-block: 15px; color: var(--muted); font-size: 13px; }
 
 .footer { padding-block: 24px calc(78px + var(--dock-bottom)); border-top: 1px solid var(--line); background: #f5ede3; }
-.footer-grid { display: grid; gap: 17px; }
+.footer-grid { display: grid; justify-items: center; gap: 17px; text-align: center; }
 .footer h2 { font-size: 14px; font-weight: 690; letter-spacing: -.02em; }
 .footer p { margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.45; }
-.contact-icons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
-.contact-icons .icon-button { color: #873f22; text-decoration: none; }
-.contact-icons .icon { width: 23px; height: 23px; }
-.whatsapp-icon { display: block; flex: 0 0 23px; width: 23px; height: 23px; }
+.footer-contacts { grid-column: 1 / -1; }
+.contact-icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 9px; }
+.contact-icons img { width: 25px; height: 25px; object-fit: contain; border-radius: 24%; }
 
 .dock {
   position: fixed;
@@ -328,16 +312,17 @@ h1 { font-size: clamp(23px, 6.7vw, 34px); font-weight: 680; line-height: 1.07; }
   background: #fffdf9f9;
   box-shadow: 0 6px 22px #57301718;
 }
-.dock::before {
+.dock-highlight {
   position: absolute;
   z-index: -1;
-  inset: 3px auto 3px 3px;
+  top: 3px;
+  bottom: 3px;
+  left: calc(3px + (100% - 6px) / 3 * var(--dock-index, 0));
   width: calc((100% - 6px) / 3);
   border-radius: 18px;
   background: #f8eadf;
-  transform: translateX(calc(var(--dock-index, 0) * 100%));
-  --tw-ease: var(--ease-soft);
-  content: "";
+  transform-origin: left center;
+  pointer-events: none;
 }
 .dock[data-active="menu"] { --dock-index: 1; }
 .dock[data-active="cart"] { --dock-index: 2; }
@@ -380,6 +365,8 @@ h1 { font-size: clamp(23px, 6.7vw, 34px); font-weight: 680; line-height: 1.07; }
 .toast .icon { width: 17px; height: 17px; color: #476545; }
 
 dialog {
+  --sheet-offscreen: translateY(100%);
+  --sheet-duration: .4s;
   position: fixed;
   inset: auto 0 0;
   width: min(100%, 600px);
@@ -395,10 +382,10 @@ dialog {
   box-shadow: 0 16px 65px #36221928;
 }
 dialog::backdrop { background: #37251c69; }
-dialog[open] { animation: sheet-in .44s var(--ease-soft) both; }
+dialog[open] { animation: sheet-in var(--sheet-duration) var(--ease-soft) both; }
 dialog[open]::backdrop { animation: fade-in .32s var(--ease-soft) both; }
-dialog.closing { animation: sheet-out .24s cubic-bezier(.45,0,.65,1) both; pointer-events: none; }
-dialog.closing::backdrop { animation: fade-out .24s ease-in both; }
+dialog.closing { animation: sheet-out var(--sheet-duration) cubic-bezier(.75, 0, .78, .2) both; pointer-events: none; }
+dialog.closing::backdrop { animation: fade-out .32s cubic-bezier(.75, 0, .78, .2) both; }
 html:has(dialog[open]) { overflow: hidden; }
 .sheet { position: relative; display: flex; flex-direction: column; max-height: inherit; }
 .sheet-handle { flex: 0 0 auto; width: 33px; height: 4px; margin: 7px auto 5px; border-radius: 20px; background: #d6c6b8; }
@@ -435,7 +422,7 @@ fieldset { min-width: 0; padding: 0; border: 0; }
 legend, .field, .date-label, .fixed-option { padding: 0; font-size: 12px; font-weight: 650; }
 legend { margin-bottom: 5px; }
 .shape-options, .size-options, .decor-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
-.size-options { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.size-options { grid-template-columns: none; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; }
 .choice { position: relative; display: grid; min-width: 0; cursor: pointer; }
 .choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .choice > span {
@@ -542,18 +529,7 @@ details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
 .bar-note { grid-column: 1 / -1; color: var(--muted); font-size: 10px; line-height: 1.25; }
 .continue-button { min-width: 132px; }
 .purchase-button { min-width: 132px; }
-.purchase-button .whatsapp-icon {
-  box-sizing: content-box;
-  width: 21px;
-  height: 21px;
-  flex: 0 0 21px;
-  padding: 2px;
-  border-radius: 50%;
-  background: white;
-}
 .purchase-button[aria-disabled="true"] { background: #eee2d7; color: #66544a; cursor: default; }
-.purchase-window time { font-weight: 650; }
-#buy-countdown { font-variant-numeric: tabular-nums; }
 .stepper button { transition: transform .25s var(--ease-soft), background-color .25s var(--ease-soft); }
 .review-items { display: grid; gap: 6px; padding: 0; list-style: none; }
 .review-items li, .review-details > div { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
@@ -567,14 +543,33 @@ details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
 .review-edit { justify-self: start; }
 .review-copy { justify-self: end; }
 .copy-status:empty { display: none; }
+.review-support {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0 12px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+.review-support a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  color: var(--accent-hover);
+  font-weight: 650;
+  text-underline-offset: 2px;
+}
 
 @keyframes sheet-in {
-  0% { transform: translateY(76px) scale(.985); opacity: .65; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
+  from { transform: var(--sheet-offscreen); }
+  to { transform: none; }
 }
 @keyframes sheet-out {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(55px); opacity: .25; }
+  from { transform: none; }
+  to { transform: var(--sheet-offscreen); }
 }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
@@ -617,13 +612,10 @@ details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
   .card-body { padding-inline: 4px; }
   .card-bottom .price { font-size: 14px; }
   .footer { padding-block: 26px; }
-  .footer-grid { grid-template-columns: 1.1fr 1fr 1fr; }
-  [data-demo] .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: auto auto; justify-content: center; align-items: center; column-gap: clamp(28px, 7vw, 100px); }
   .dock { display: none; }
   .toast { right: 20px; bottom: 20px; }
-  dialog { inset: 0; width: min(100% - 30px, 590px); margin: auto; border-radius: 21px; }
-  dialog[open] { animation-name: dialog-enter; }
-  dialog.closing { animation-name: fade-out; }
+  dialog { --sheet-offscreen: translateY(20px); inset: 0; width: min(100% - 30px, 590px); margin: auto; border-radius: 21px; }
   .sheet-scroll { padding-inline: 21px; }
   .sheet-bar { padding-inline: 19px; }
   .sheet-handle { visibility: hidden; margin-top: 7px; }
@@ -633,10 +625,6 @@ details[open] > summary::after { rotate: 225deg; translate: 0 1px; }
   .decor-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@keyframes dialog-enter {
-  from { opacity: 0; transform: translateY(13px) scale(.98); }
-  to { opacity: 1; transform: none; }
-}
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
   .product-card[style] { animation-delay: var(--card-delay, 0ms); }

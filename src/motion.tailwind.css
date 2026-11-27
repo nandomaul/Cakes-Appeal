@@ -1,17 +1,12 @@
 @import "tailwindcss/utilities.css" source(none);
-@source inline("motion-safe:animate-nav-in motion-safe:animate-cart-in motion-safe:animate-card-in motion-safe:animate-badge-in motion-safe:animate-toast-in motion-safe:before:transition-transform motion-safe:before:duration-500");
+@source inline("motion-safe:animate-cart-in motion-safe:animate-card-in motion-safe:animate-badge-in motion-safe:animate-toast-in");
 
 @theme {
-  --animate-nav-in: nav-in 460ms cubic-bezier(.22,.8,.25,1) both;
   --animate-cart-in: cart-in 440ms cubic-bezier(.22,.8,.25,1) both;
   --animate-card-in: card-in 430ms cubic-bezier(.22,.8,.25,1) backwards;
   --animate-badge-in: badge-in 330ms cubic-bezier(.2,.85,.24,1) both;
   --animate-toast-in: toast-in 360ms cubic-bezier(.22,.8,.25,1) both;
 
-  @keyframes nav-in {
-    from { opacity: .65; translate: 0 10px; }
-    to { opacity: 1; translate: 0 0; }
-  }
   @keyframes cart-in {
     from { opacity: .65; translate: 0 11px; }
     to { opacity: 1; translate: 0 0; }

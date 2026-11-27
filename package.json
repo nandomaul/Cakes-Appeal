@@ -8,7 +8,8 @@
     "build": "node scripts/build.mjs",
     "preview": "node scripts/dev.mjs --preview",
     "build:store": "node scripts/build.mjs --store",
-    "build:motion": "tailwindcss -i src/motion.tailwind.css -o src/motion.css --minify"
+    "build:motion": "tailwindcss -i src/motion.tailwind.css -o src/motion.css --minify",
+    "build:pages": "node scripts/build.mjs --pages"
   },
   "devDependencies": {
     "@tailwindcss/cli": "4.3.5",

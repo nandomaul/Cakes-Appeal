@@ -17,16 +17,13 @@ const cartItems = find("#cart-items");
 const dateInput = find("#event-date");
 const dateError = find("#date-error");
 const delivery = find("#delivery");
-const isDemo = document.documentElement.hasAttribute("data-demo");
+const isCatalog = document.documentElement.hasAttribute("data-catalog");
 const whatsappContact = find("#whatsapp-contact");
-const sendOrder = isDemo ? null : find("#submit-whatsapp");
-const copyOrder = isDemo ? null : find("#copy-order");
-const demoOrder = find("#finish-demo");
-const review = find("#review-view");
-const purchaseControl = isDemo ? demoOrder : sendOrder;
-const countdown = find("#buy-countdown");
-const buyDeadline = Date.parse(find("#buy-window time").dateTime);
+const whatsappBase = whatsappContact.href;
+const sendOrder = isCatalog ? null : find("#submit-whatsapp");
+const copyOrder = isCatalog ? null : find("#copy-order");
 const dock = find(".dock");
+const dockHighlight = find(".dock-highlight");
 const copyStatus = find("#copy-status");
 const photo = find("#active-photo");
 const photoButtons = find("#photo-buttons");
@@ -38,15 +35,37 @@ let activeProduct;
 let activePhotos = [];
 let lines = readCart();
 let toastTimer;
-let purchaseClosed = false;
 let destination = location.hash === "#menu" ? "menu" : "home";
 
 function updateDock(route) {
-  dock.dataset.active = route;
+  if (dock.dataset.active !== route) moveDockHighlight(route);
   for (const link of dock.querySelectorAll("[data-route]")) {
     if (link.dataset.route === route) link.setAttribute("aria-current", "location");
     else link.removeAttribute("aria-current");
   }
+}
+
+function moveDockHighlight(route) {
+  if (reduceMotion.matches) {
+    dock.dataset.active = route;
+    return;
+  }
+  const from = dockHighlight.getBoundingClientRect();
+  dockHighlight.getAnimations().forEach((animation) => animation.cancel());
+  dock.dataset.active = route;
+  const to = dockHighlight.getBoundingClientRect();
+  const distance = from.left - to.left;
+  if (!from.width || !to.width || Math.abs(distance) < 1) return;
+
+  const stretch = Math.min(Math.abs(distance) * 0.46, to.width * 0.55);
+  const middle = distance * 0.39 - (distance > 0 ? stretch : 0);
+  const frame = (x, scale, offset) => ({ transform: `translateX(${x}px) scaleX(${scale})`, offset });
+  dockHighlight.animate([
+    frame(distance, from.width / to.width, 0),
+    frame(middle, 1 + stretch / to.width, 0.45),
+    frame(distance > 0 ? -4 : 4, 1.08, 0.76),
+    frame(0, 1, 1),
+  ], { duration: 460, easing: "cubic-bezier(.22,.8,.25,1)" });
 }
 
 function replayMotion(element, animation) {
@@ -56,51 +75,21 @@ function replayMotion(element, animation) {
   element.classList.add(animation);
 }
 
-function updateBuyWindow() {
-  if (purchaseClosed) return false;
-  const remaining = buyDeadline - Date.now();
-  if (remaining <= 0) {
-    purchaseClosed = true;
-    countdown.textContent = " · Akses pembelian berakhir.";
-    purchaseControl.setAttribute("aria-disabled", "true");
-    purchaseControl.querySelector(".purchase-label").textContent = "Akses berakhir";
-    purchaseControl.removeAttribute("href");
-    if (!isDemo) {
-      whatsappContact.removeAttribute("href");
-      whatsappContact.hidden = true;
-      copyOrder.hidden = true;
-    }
-    return false;
-  }
-
-  if (sheet.open && !review.hidden) {
-    const secondCount = Math.ceil(remaining / 1000);
-    const days = Math.floor(secondCount / 86400);
-    const hours = Math.floor(secondCount / 3600) % 24;
-    const minutes = Math.floor(secondCount / 60) % 60;
-    const seconds = secondCount % 60;
-    const clock = [hours, minutes, seconds].map((unit) => String(unit).padStart(2, "0")).join(":");
-    countdown.textContent = " · " + (days ? days + " hari " : "") + clock;
-  }
-  return true;
-}
-
-function animateDestination(route) {
+function selectDestination(route) {
   destination = route;
   updateDock(route);
-  const section = find(route === "menu" ? "#menu" : ".hero");
-  replayMotion(section, "motion-safe:animate-nav-in");
 }
 
-function renderMenu() {
+function renderMenu({ append = false } = {}) {
   const query = search.value.trim().toLocaleLowerCase("id");
   const matches = catalog.filter((product) =>
     (category === "all" || product.categories.includes(category)) &&
     (product.name + " " + product.series).toLocaleLowerCase("id").includes(query));
   const isFeatured = category === "all" && !query && !showAll;
   const visible = isFeatured ? matches.slice(0, 4) : matches;
+  const added = append ? visible.slice(products.childElementCount) : visible;
 
-  products.innerHTML = visible.map((product, index) => `
+  const cards = added.map((product, index) => `
     <article class="product-card motion-safe:animate-card-in" style="--card-delay:${Math.min(index, 7) * 24}ms">
       <button class="product-link" type="button" data-product="${product.id}" aria-label="Lihat ${product.name}">
         <img class="product-photo" src="${productPhoto(product)}" width="1265" height="621" loading="lazy" alt="">
@@ -117,11 +106,12 @@ function renderMenu() {
       </div>
     </article>`).join("");
 
-  if (!visible.length) products.innerHTML = '<p class="no-results">Produk belum ditemukan. Coba kata kunci atau kategori lain.</p>';
+  if (append) products.insertAdjacentHTML("beforeend", cards);
+  else products.innerHTML = cards || '<p class="no-results">Produk belum ditemukan. Coba kata kunci atau kategori lain.</p>';
 
   more.hidden = !isFeatured;
   find("#menu-heading").textContent = query ? "Hasil pencarian" : isFeatured ? "Menu pilihan" : "Menu Cakes Appeal";
-  find("#menu-status").textContent = isFeatured ? "" : matches.length + " produk";
+  find("#menu-status").textContent = (isFeatured ? visible.length + " dari " : "") + matches.length + " produk";
 }
 
 for (const filter of filters) {
@@ -134,11 +124,14 @@ for (const filter of filters) {
   });
 }
 
-search.addEventListener("input", renderMenu);
-more.addEventListener("click", () => {
+search.addEventListener("input", () => renderMenu());
+more.addEventListener("click", (event) => {
+  const firstNewIndex = products.childElementCount;
   showAll = true;
-  renderMenu();
-  products.querySelectorAll(".product-link")[4]?.focus();
+  renderMenu({ append: true });
+  const firstNewProduct = products.children[firstNewIndex]?.querySelector(".product-link");
+  firstNewProduct?.focus({ preventScroll: true });
+  if (event.detail === 0) firstNewProduct?.scrollIntoView({ block: "nearest" });
 });
 
 function optionText(item, absolutePrice = false) {
@@ -201,7 +194,6 @@ function showView(name) {
   sheet.setAttribute("aria-labelledby", name + "-title");
   if (!sheet.open) sheet.showModal();
   if (name !== "product") updateDock("cart");
-  if (name === "review") updateBuyWindow();
   view.querySelector(".sheet-scroll").scrollTop = 0;
   find("#" + name + "-title").focus({ preventScroll: true });
 }
@@ -342,7 +334,7 @@ cartItems.addEventListener("click", (event) => {
 
 document.addEventListener("click", (event) => {
   const route = event.target.closest("a[data-route]");
-  if (route) animateDestination(route.dataset.route);
+  if (route) selectDestination(route.dataset.route);
   if (event.target.closest("[data-open-cart]")) {
     openCart();
     return;
@@ -381,8 +373,7 @@ function checkoutDetails(fields, order) {
 }
 
 function orderMessage(order, details, pendingShipping) {
-  const greeting = isDemo ? "SIMULASI CAKES APPEAL — contoh draf pesanan." : "Halo Cakes Appeal! Saya mau pesan:";
-  const text = [greeting, ""];
+  const text = ["Halo Cakes Appeal! Saya mau pesan:", ""];
   for (const [index, { product, variant, quantity, amount }] of order.items.entries()) {
     text.push((index + 1) + ". " + product.name + " (" + product.series + ") ×" + quantity);
     if (product.note) text.push("   " + product.note);
@@ -394,7 +385,7 @@ function orderMessage(order, details, pendingShipping) {
   for (const [label, value] of details) text.push(label + ": " + value);
   const shippingNote = pendingShipping ? " (belum termasuk ongkir)" : "";
   text.push("Estimasi: " + rupiah(order.total) + shippingNote);
-  if (!isDemo) text.push("", "Boleh dicek ketersediaan tanggal dan total akhirnya? Terima kasih!");
+  text.push("", "Boleh dicek ketersediaan tanggal dan total akhirnya? Terima kasih!");
   return text.join("\n");
 }
 
@@ -424,11 +415,9 @@ function renderReview(fields, order) {
   }));
   find("#review-total").value = rupiah(order.total);
   find("#review-shipping-note").hidden = !pendingShipping;
-  const available = updateBuyWindow();
-  if (available) {
-    const destination = isDemo ? "https://wa.me/" : whatsappContact.dataset.waUrl;
-    purchaseControl.href = whatsappDraft(destination, orderMessage(order, details, pendingShipping));
-    purchaseControl.removeAttribute("aria-disabled");
+  if (sendOrder) {
+    sendOrder.href = whatsappDraft(whatsappBase, orderMessage(order, details, pendingShipping));
+    sendOrder.removeAttribute("aria-disabled");
   }
   copyStatus.textContent = "";
 }
@@ -451,7 +440,7 @@ orderForm.addEventListener("submit", (event) => {
 
 find("#edit-order").addEventListener("click", openCart);
 copyOrder?.addEventListener("click", async () => {
-  if (!updateBuyWindow() || !sendOrder.hasAttribute("href")) return;
+  if (!sendOrder.hasAttribute("href")) return;
   try {
     await navigator.clipboard.writeText(new URL(sendOrder.href).searchParams.get("text"));
     copyStatus.textContent = "Pesanan disalin.";
@@ -471,25 +460,7 @@ async function closeSheet() {
   updateDock(destination);
 }
 find("#close-sheet").addEventListener("click", closeSheet);
-function checkBeforeOpening(event) {
-  if (!updateBuyWindow()) event.preventDefault();
-}
-
-purchaseControl.addEventListener("click", checkBeforeOpening);
-if (!isDemo) {
-  whatsappContact.addEventListener("click", checkBeforeOpening);
-  if (updateBuyWindow()) {
-    whatsappContact.href = whatsappDraft(whatsappContact.dataset.waUrl,
-      "Halo Cakes Appeal! Saya mau tanya tentang menu dan pemesanan.");
-  }
-}
-if (updateBuyWindow()) {
-  const timer = setInterval(() => {
-    if (!updateBuyWindow()) clearInterval(timer);
-  }, 1000);
-}
-window.addEventListener("pageshow", updateBuyWindow);
-document.addEventListener("visibilitychange", updateBuyWindow);
+whatsappContact.href = whatsappDraft(whatsappBase, "Halo Cakes Appeal! Saya mau tanya tentang menunya.");
 sheet.addEventListener("cancel", (event) => {
   event.preventDefault();
   closeSheet();
@@ -500,7 +471,7 @@ sheet.addEventListener("click", (event) => {
 for (const button of sheet.querySelectorAll("[data-browse-menu]")) {
   button.addEventListener("click", async () => {
     await closeSheet();
-    animateDestination("menu");
+    selectDestination("menu");
     find("#menu").scrollIntoView();
     find("#menu-heading").focus({ preventScroll: true });
   });
