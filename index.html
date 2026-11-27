@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fbf8f3">
+  <meta name="description" content="Pilih kue ulang tahun, millecrepes, dan pastry keto dari Cakes Appeal, Menteng.">
+  <title>Cakes Appeal — Kue dan Pastry di Menteng</title>
+  <link rel="icon" href="./assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="./src/styles.css">
+  <link rel="stylesheet" href="./src/motion.css">
+</head>
+<body id="atas">
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 7.5h14l1 12H4l1-12Z"/><path d="M8.5 9V6a3.5 3.5 0 0 1 7 0v3"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h5v-5h4v5h5V9"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1.1"/><rect x="14" y="4" width="6" height="6" rx="1.1"/><rect x="4" y="14" width="6" height="6" rx="1.1"/><rect x="14" y="14" width="6" height="6" rx="1.1"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="5.8"/><path d="m15 15 4.5 4.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h14m-5.5-5.5 5.5 5.5-5.5 5.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-contact" viewBox="0 0 24 24"><path d="M6 5h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4 3v-3H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/><path d="M8.5 11h.01m3.5 0h.01m3.5 0h.01" stroke-width="2.3"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4.3"/><circle cx="12" cy="12" r="3.5"/><path d="M17 7h.01" stroke-width="2.4"/></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M19.5 4.7a9 9 0 0 0-14 11.1L4 20.5l4.8-1.4a9 9 0 0 0 10.7-14.4Z"/><path d="M9 8.3c-.9.1-1.1 1.2-.8 2.1.6 1.9 2.9 4.3 4.9 5 .9.3 2.1.3 2.5-.7l.3-.7-2.2-1-.7.8a7 7 0 0 1-2.9-2.8l.7-.7-1-2H9Z" stroke-width="1.3"/></symbol>
+    <symbol id="i-line" viewBox="0 0 24 24"><path d="M20.4 10.2c0-3.8-3.7-6.7-8.4-6.7s-8.4 2.9-8.4 6.7c0 3.3 2.8 5.9 6.6 6.6.4.1.6.3.5.7l-.3 2.2c0 .3.3.5.6.3 2.7-1.4 5.7-3.6 7.7-5.6 1.1-1.2 1.7-2.7 1.7-4.2Z"/><path d="M7.2 8.8v3.1H9m1.3-3.1v3.1m1.5 0V8.8l2.2 3.1V8.8m3 0h-1.8v3.1H17m-1.8-1.5h1.5" stroke-width=".9"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="wrap topbar">
+      <a href="#atas" class="brand" data-route="home">
+        <img src="./assets/logo.png" alt="Cakes Appeal" width="2048" height="682">
+      </a>
+      <nav class="primary-nav" aria-label="Navigasi utama">
+        <a href="#menu" data-route="menu">Menu</a>
+        <!-- store-only -->
+        <a href="#kontak" class="nav-contact icon-button" aria-label="Kontak" title="Kontak">
+          <svg class="icon" aria-hidden="true"><use href="#i-contact"/></svg>
+        </a>
+        <!-- /store-only -->
+      </nav>
+      <button type="button" class="top-bag icon-button" data-open-cart aria-label="Keranjang">
+        <svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>
+        <span class="cart-badge" data-cart-count hidden></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="demo-notice demo-only">Demo Cakes Appeal · Simulasi pemesanan</p>
+    <section class="hero" aria-labelledby="headline">
+      <img class="hero-image" src="./assets/images/cover.jpg" alt="" fetchpriority="high">
+      <div class="hero-copy">
+        <h1 id="headline">Rancang kue<br>ulang tahunmu.</h1>
+        <p>Pilih ukuran, rasa, dan dekor favoritmu.</p>
+        <button class="button hero-button" type="button" data-product="birthday-cake">
+          Rancang kue <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <section class="menu" id="menu" aria-labelledby="menu-heading">
+      <label class="search">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <input id="product-search" type="search" placeholder="Cari kue atau pastry" aria-label="Cari kue atau pastry" autocomplete="off">
+      </label>
+      <div class="filters" role="group" aria-label="Kategori menu">
+        <button type="button" data-category="all" aria-pressed="true">
+          <span class="category-picture"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span>
+          Semua
+        </button>
+        <button type="button" data-category="birthday" aria-pressed="false">
+          <span class="category-picture"><img src="./assets/images/birthday-cake.jpg" alt=""></span>
+          Birthday Cake
+        </button>
+        <button type="button" data-category="millecrepes" aria-pressed="false">
+          <span class="category-picture"><img src="./assets/images/millecrepes-slice.jpg" alt=""></span>
+          Millecrepes
+        </button>
+        <button type="button" data-category="keto" aria-pressed="false">
+          <span class="category-picture"><img src="./assets/images/keto-birthday.jpg" alt=""></span>
+          Keto
+        </button>
+      </div>
+      <div class="section-heading">
+        <div>
+          <h2 id="menu-heading" tabindex="-1">Menu pilihan</h2>
+          <p class="find-count" id="menu-status" role="status"></p>
+        </div>
+        <button class="text-button" type="button" id="more">
+          Lihat semua <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </button>
+      </div>
+      <div class="product-grid" id="products"></div>
+    </section>
+  </main>
+
+  <footer id="kontak" class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a href="#atas" class="brand" data-route="home"><img src="./assets/logo.png" alt="Cakes Appeal" width="2048" height="682"></a>
+        <p>Menteng, Jakarta</p>
+      </div>
+      <div>
+        <h2>Pemesanan</h2>
+        <p>Non-Keto minimal H-7<br>Produk Keto minimal H-3</p>
+        <p>Kurir Kue, kurir online, atau ambil sendiri.</p>
+      </div>
+      <!-- store-only -->
+      <div>
+        <h2>Kontak</h2>
+        <div class="contact-icons">
+          <a class="icon-button" id="whatsapp-contact" href="https://wa.me/628999909223" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Cakes Appeal" title="WhatsApp">
+            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+          </a>
+          <a class="icon-button" href="https://line.me/R/ti/p/~cakesappeal" target="_blank" rel="noopener noreferrer" aria-label="LINE Cakes Appeal" title="LINE">
+            <svg class="icon" aria-hidden="true"><use href="#i-line"/></svg>
+          </a>
+          <a class="icon-button" href="https://www.instagram.com/cakesappeal/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Cakes Appeal" title="Instagram">
+            <svg class="icon" aria-hidden="true"><use href="#i-instagram"/></svg>
+          </a>
+        </div>
+      </div>
+      <!-- /store-only -->
+    </div>
+  </footer>
+
+  <nav class="dock motion-safe:before:transition-transform motion-safe:before:duration-300" data-active="home" aria-label="Navigasi cepat">
+    <a href="#atas" data-route="home" aria-current="location"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Beranda</a>
+    <a href="#menu" data-route="menu"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Menu</a>
+    <button type="button" data-open-cart data-route="cart">
+      <span class="dock-icon"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg><span class="cart-badge" data-cart-count hidden></span></span>
+      Keranjang
+    </button>
+  </nav>
+  <div id="toast" class="toast" role="status" hidden>
+    <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+    <span></span>
+    <button type="button" class="text-button" data-open-cart>Lihat</button>
+  </div>
+
+  <dialog id="shop-sheet" aria-labelledby="product-title">
+    <div class="sheet">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <button class="icon-button close-button" id="close-sheet" type="button" aria-label="Tutup panel" autofocus>
+        <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+      <div class="sheet-view" id="product-view">
+        <div class="sheet-scroll">
+          <header class="sheet-heading">
+            <p class="series" id="product-series"></p>
+            <h2 id="product-title" tabindex="-1"></h2>
+            <p id="product-description"></p>
+          </header>
+          <div class="gallery">
+            <img id="active-photo" alt="" width="1265" height="621">
+            <div id="photo-buttons" class="photo-buttons" role="group" aria-label="Foto produk"></div>
+          </div>
+          <form id="item-form" class="product-form"></form>
+        </div>
+        <div class="sheet-bar">
+          <div class="estimate"><span>Harga item</span><output class="price" id="item-total" form="item-form"></output></div>
+          <button class="button" id="add-item" type="submit" form="item-form">
+            <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Tambah ke keranjang
+          </button>
+        </div>
+      </div>
+
+      <div class="sheet-view" id="cart-view" hidden>
+        <div class="sheet-scroll motion-safe:animate-cart-in">
+          <header class="sheet-heading">
+            <h2 id="cart-title" tabindex="-1">Keranjang</h2>
+            <div class="cart-heading-row">
+              <p id="cart-caption"></p>
+              <button class="text-button" type="button" id="add-more" data-browse-menu>
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Tambah item
+              </button>
+            </div>
+          </header>
+          <div class="cart-empty" id="cart-empty" hidden>
+            <div class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg></div>
+            <h3>Keranjang masih kosong</h3>
+            <p>Pilih kue atau pastry dari menu.</p>
+            <button class="button" type="button" data-browse-menu>Lihat menu</button>
+          </div>
+          <ul id="cart-items" class="cart-items" aria-label="Item di keranjang"></ul>
+          <form id="order-form" novalidate>
+            <label class="date-label" for="event-date">Tanggal acara</label>
+            <input id="event-date" name="date" type="date" required aria-describedby="date-note date-error">
+            <p class="field-note" id="date-note"></p>
+            <p class="field-note field-error" id="date-error" role="alert" hidden></p>
+            <details class="order-details">
+              <summary>Pengiriman dan detail pesanan</summary>
+              <div class="detail-grid">
+                <label class="field full">Pengiriman <select name="delivery" id="delivery"></select></label>
+                <label class="field full">Tulisan di kue <input name="inscription" maxlength="100" placeholder="Contoh: Happy Birthday, Rara"></label>
+                <label class="field">Nama pemesan <input name="customer" maxlength="100" autocomplete="name"></label>
+                <label class="field">Nomor HP pemesan <input name="phone" maxlength="25" type="tel" autocomplete="tel"></label>
+                <label class="field full">Alamat kirim <textarea name="address" rows="2" maxlength="300" autocomplete="street-address"></textarea></label>
+                <label class="field">Nama penerima <input name="recipient" maxlength="100"></label>
+                <label class="field">Nomor HP penerima <input name="recipientPhone" maxlength="25" type="tel"></label>
+              </div>
+            </details>
+          </form>
+        </div>
+        <div class="sheet-bar" id="cart-bar">
+          <div class="estimate"><span>Total estimasi</span><output class="price" id="cart-total" form="order-form"></output></div>
+          <button class="button continue-button" type="submit" form="order-form">Lanjutkan <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <p class="bar-note">Total akhir dikonfirmasi admin.</p>
+        </div>
+      </div>
+
+      <div class="sheet-view" id="review-view" hidden>
+        <div class="sheet-scroll">
+          <header class="sheet-heading">
+            <h2 id="review-title" tabindex="-1">Ringkasan pesanan</h2>
+            <p class="store-only-copy">Periksa item dan tanggal acara sebelum memesan.</p>
+            <p class="demo-only">Simulasi selesai. Cek pilihan dan estimasi pesananmu.</p>
+          </header>
+          <ul id="review-items" class="review-items" aria-label="Item pesanan"></ul>
+          <dl id="review-details" class="review-details"></dl>
+        </div>
+        <div class="sheet-bar review-bar">
+          <div class="estimate"><span>Total estimasi</span><output class="price" id="review-total"></output></div>
+          <!-- store-only -->
+          <a class="button" id="submit-whatsapp" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg> Pesan via WhatsApp
+          </a>
+          <!-- /store-only -->
+          <button class="button demo-only" id="finish-demo" type="button">Selesai</button>
+          <p class="bar-note" id="review-shipping-note">Estimasi belum termasuk ongkir.</p>
+          <button class="text-button review-edit" id="edit-order" type="button">Kembali ke keranjang</button>
+          <!-- store-only -->
+          <button class="text-button review-copy" id="copy-order" type="button">Salin pesanan</button>
+          <!-- /store-only -->
+          <p class="bar-note copy-status" id="copy-status" role="status"></p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "cakes-appeal",
+  "version": "4.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/dev.mjs --preview",
+    "build:store": "node scripts/build.mjs --store",
+    "build:motion": "tailwindcss -i src/motion.tailwind.css -o src/motion.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.5",
+    "tailwindcss": "4.3.5"
+  }
+}

@@ -1,0 +1,16 @@
+@import "tailwindcss/utilities.css" source(none);
+@source inline("motion-safe:animate-nav-in motion-safe:animate-cart-in motion-safe:before:transition-transform motion-safe:before:duration-300");
+
+@theme {
+  --animate-nav-in: nav-in 380ms cubic-bezier(.22,.8,.35,1) both;
+  --animate-cart-in: cart-in 300ms cubic-bezier(.22,.8,.35,1) both;
+
+  @keyframes nav-in {
+    from { opacity: .68; translate: 0 7px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+  @keyframes cart-in {
+    from { opacity: .55; translate: 0 9px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+}
