@@ -38,7 +38,10 @@ const server = createServer(async (req, res) => {
       res.writeHead(404).end("Halaman tidak ditemukan.");
       return;
     }
-    const body = await readFile(file);
+    let body = await readFile(file);
+    if (!preview && (pathname === "/" || pathname === "/index.html")) {
+      body = body.toString("utf8").replace('<html lang="id" data-demo>', '<html lang="id">');
+    }
     res.writeHead(200, { "Content-Type": type, "Cache-Control": "no-cache" });
     res.end(req.method === "HEAD" ? undefined : body);
   } catch {

@@ -5,11 +5,20 @@ const root = new URL("../", import.meta.url);
 const store = process.argv.includes("--store");
 const output = new URL(store ? "dist-store/" : "dist/", root);
 const assets = ["styles.css", "motion.css", "app.js", "cart.js", "catalog.js", "Tailwind-MIT.txt"];
-const template = await readFile(new URL("index.html", root), "utf8");
+let template = await readFile(new URL("index.html", root), "utf8");
+const siteUrl = process.env.CAKES_APPEAL_SITE_URL;
+if (siteUrl) {
+  const published = new URL(siteUrl);
+  if (published.protocol !== "https:" || published.search || published.hash) {
+    throw new Error("Gunakan URL HTTPS situs tanpa query atau hash.");
+  }
+  published.pathname = published.pathname.replace(/\/?$/, "/");
+  template = template.replaceAll("https://nandomaul.github.io/Cakes-Appeal/", published.href);
+}
+
 const html = store
-  ? template
-  : template.replace('<html lang="id">', '<html lang="id" data-demo>')
-    .replace(/^[ \t]*<!-- store-only -->[\s\S]*?<!-- \/store-only -->[ \t]*\r?\n/gm, "");
+  ? template.replace('<html lang="id" data-demo>', '<html lang="id">')
+  : template.replace(/^[ \t]*<!-- store-only -->[\s\S]*?<!-- \/store-only -->[ \t]*\r?\n/gm, "");
 
 const work = await mkdtemp(fileURLToPath(new URL(".build-", root)));
 const staging = pathToFileURL(work + "/");

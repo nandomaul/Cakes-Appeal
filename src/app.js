@@ -17,7 +17,15 @@ const cartItems = find("#cart-items");
 const dateInput = find("#event-date");
 const dateError = find("#date-error");
 const delivery = find("#delivery");
-const sendOrder = find("#submit-whatsapp");
+const isDemo = document.documentElement.hasAttribute("data-demo");
+const whatsappContact = find("#whatsapp-contact");
+const sendOrder = isDemo ? null : find("#submit-whatsapp");
+const copyOrder = isDemo ? null : find("#copy-order");
+const demoOrder = find("#finish-demo");
+const review = find("#review-view");
+const purchaseControl = isDemo ? demoOrder : sendOrder;
+const countdown = find("#buy-countdown");
+const buyDeadline = Date.parse(find("#buy-window time").dateTime);
 const dock = find(".dock");
 const copyStatus = find("#copy-status");
 const photo = find("#active-photo");
@@ -30,6 +38,7 @@ let activeProduct;
 let activePhotos = [];
 let lines = readCart();
 let toastTimer;
+let purchaseClosed = false;
 let destination = location.hash === "#menu" ? "menu" : "home";
 
 function updateDock(route) {
@@ -40,16 +49,49 @@ function updateDock(route) {
   }
 }
 
+function replayMotion(element, animation) {
+  if (reduceMotion.matches) return;
+  element.classList.remove(animation);
+  void element.offsetWidth;
+  element.classList.add(animation);
+}
+
+function updateBuyWindow() {
+  if (purchaseClosed) return false;
+  const remaining = buyDeadline - Date.now();
+  if (remaining <= 0) {
+    purchaseClosed = true;
+    countdown.textContent = " · Akses pembelian berakhir.";
+    purchaseControl.setAttribute("aria-disabled", "true");
+    purchaseControl.querySelector(".purchase-label").textContent = "Akses berakhir";
+    if (isDemo) {
+      demoOrder.disabled = true;
+    } else {
+      sendOrder.removeAttribute("href");
+      whatsappContact.removeAttribute("href");
+      whatsappContact.hidden = true;
+      copyOrder.hidden = true;
+    }
+    return false;
+  }
+
+  if (sheet.open && !review.hidden) {
+    const secondCount = Math.ceil(remaining / 1000);
+    const days = Math.floor(secondCount / 86400);
+    const hours = Math.floor(secondCount / 3600) % 24;
+    const minutes = Math.floor(secondCount / 60) % 60;
+    const seconds = secondCount % 60;
+    const clock = [hours, minutes, seconds].map((unit) => String(unit).padStart(2, "0")).join(":");
+    countdown.textContent = " · " + (days ? days + " hari " : "") + clock;
+  }
+  return true;
+}
+
 function animateDestination(route) {
   destination = route;
   updateDock(route);
   const section = find(route === "menu" ? "#menu" : ".hero");
-  const animation = "motion-safe:animate-nav-in";
-  section.classList.remove(animation);
-  if (!reduceMotion.matches) {
-    void section.offsetWidth;
-    section.classList.add(animation);
-  }
+  replayMotion(section, "motion-safe:animate-nav-in");
 }
 
 function renderMenu() {
@@ -60,8 +102,8 @@ function renderMenu() {
   const isFeatured = category === "all" && !query && !showAll;
   const visible = isFeatured ? matches.slice(0, 4) : matches;
 
-  products.innerHTML = visible.map((product) => `
-    <article class="product-card">
+  products.innerHTML = visible.map((product, index) => `
+    <article class="product-card motion-safe:animate-card-in" style="--card-delay:${Math.min(index, 7) * 24}ms">
       <button class="product-link" type="button" data-product="${product.id}" aria-label="Lihat ${product.name}">
         <img class="product-photo" src="${productPhoto(product)}" width="1265" height="621" loading="lazy" alt="">
         <span class="product-name">${product.name}</span>
@@ -144,7 +186,9 @@ function setPhoto(index) {
   }
   if (!reduceMotion.matches) {
     photo.getAnimations().forEach((animation) => animation.cancel());
-    photo.animate([{ opacity: 0.55 }, { opacity: 1 }], { duration: 200 });
+    photo.animate([{ opacity: 0.72, scale: 0.988 }, { opacity: 1, scale: 1 }], {
+      duration: 300, easing: "cubic-bezier(.22, .8, .25, 1)",
+    });
   }
 }
 
@@ -159,6 +203,7 @@ function showView(name) {
   sheet.setAttribute("aria-labelledby", name + "-title");
   if (!sheet.open) sheet.showModal();
   if (name !== "product") updateDock("cart");
+  if (name === "review") updateBuyWindow();
   view.querySelector(".sheet-scroll").scrollTop = 0;
   find("#" + name + "-title").focus({ preventScroll: true });
 }
@@ -205,8 +250,10 @@ itemForm.addEventListener("change", (event) => {
 
 function updateBadge(count) {
   for (const badge of document.querySelectorAll("[data-cart-count]")) {
+    const changed = badge.textContent !== String(count);
     badge.hidden = count === 0;
     badge.textContent = count;
+    if (changed && count) replayMotion(badge, "motion-safe:animate-badge-in");
   }
   for (const button of document.querySelectorAll("[data-open-cart]:not(.text-button)")) {
     button.setAttribute("aria-label", count ? "Keranjang, " + count + " item" : "Keranjang");
@@ -223,6 +270,7 @@ function notifyAdded(productName) {
   clearTimeout(toastTimer);
   toast.querySelector("span").textContent = productName + " ditambahkan.";
   toast.hidden = false;
+  replayMotion(toast, "motion-safe:animate-toast-in");
   toastTimer = setTimeout(() => { toast.hidden = true; }, 3800);
 }
 
@@ -370,11 +418,14 @@ function renderReview(fields, order) {
   }));
   find("#review-total").value = rupiah(order.total);
   find("#review-shipping-note").hidden = !pendingShipping;
-  if (sendOrder) {
-    const whatsapp = new URL(find("#whatsapp-contact").href);
+  const available = updateBuyWindow();
+  if (sendOrder && available) {
+    const whatsapp = new URL(whatsappContact.dataset.waUrl);
     whatsapp.searchParams.set("text", orderMessage(order, details, pendingShipping));
     sendOrder.href = whatsapp.href;
+    sendOrder.removeAttribute("aria-disabled");
   }
+  find("#demo-order-status").hidden = true;
   copyStatus.textContent = "";
 }
 
@@ -395,7 +446,8 @@ orderForm.addEventListener("submit", (event) => {
 });
 
 find("#edit-order").addEventListener("click", openCart);
-find("#copy-order")?.addEventListener("click", async () => {
+copyOrder?.addEventListener("click", async () => {
+  if (!updateBuyWindow() || !sendOrder.hasAttribute("href")) return;
   try {
     await navigator.clipboard.writeText(new URL(sendOrder.href).searchParams.get("text"));
     copyStatus.textContent = "Pesanan disalin.";
@@ -415,7 +467,25 @@ async function closeSheet() {
   updateDock(destination);
 }
 find("#close-sheet").addEventListener("click", closeSheet);
-find("#finish-demo").addEventListener("click", closeSheet);
+demoOrder.addEventListener("click", () => {
+  if (updateBuyWindow()) find("#demo-order-status").hidden = false;
+});
+
+if (!isDemo) {
+  const checkBeforeOpening = (event) => {
+    if (!updateBuyWindow()) event.preventDefault();
+  };
+  whatsappContact.addEventListener("click", checkBeforeOpening);
+  sendOrder.addEventListener("click", checkBeforeOpening);
+  if (updateBuyWindow()) whatsappContact.href = whatsappContact.dataset.waUrl;
+}
+if (updateBuyWindow()) {
+  const timer = setInterval(() => {
+    if (!updateBuyWindow()) clearInterval(timer);
+  }, 1000);
+}
+window.addEventListener("pageshow", updateBuyWindow);
+document.addEventListener("visibilitychange", updateBuyWindow);
 sheet.addEventListener("cancel", (event) => {
   event.preventDefault();
   closeSheet();

@@ -58,7 +58,7 @@ export const catalog = [
 ];
 
 export const shipping = options([
-  ["Tentukan nanti"], ["Kurir Kue", 100000], ["Kurir online"], ["Ambil sendiri di Menteng"],
+  ["Tentukan nanti"], ["Kurir Kue", 100000], ["Kurir online"], ["Ambil sendiri"],
 ]);
 
 const currencyFormat = new Intl.NumberFormat("id-ID");

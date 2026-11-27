@@ -1,11 +1,24 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" data-demo>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#fbf8f3">
-  <meta name="description" content="Pilih kue ulang tahun, millecrepes, dan pastry keto dari Cakes Appeal, Menteng.">
-  <title>Cakes Appeal — Kue dan Pastry di Menteng</title>
+  <meta name="description" content="Jelajahi kue ulang tahun, millecrepes, dan pastry keto dari Cakes Appeal.">
+  <title>Cakes Appeal — Kue Ulang Tahun &amp; Pastry</title>
+  <link rel="canonical" href="https://nandomaul.github.io/Cakes-Appeal/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Cakes Appeal">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:url" content="https://nandomaul.github.io/Cakes-Appeal/">
+  <meta property="og:title" content="Cakes Appeal — Kue Ulang Tahun &amp; Pastry">
+  <meta property="og:description" content="Jelajahi birthday cake, millecrepes, dan pastry keto. Pilih kue favoritmu dan lihat estimasi pesanan.">
+  <meta property="og:image" content="https://nandomaul.github.io/Cakes-Appeal/assets/images/share-cakes-appeal-v2.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo Cakes Appeal dengan birthday cake, millecrepes, dan red velvet.">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="./src/styles.css">
   <link rel="stylesheet" href="./src/motion.css">
@@ -35,7 +48,7 @@
       <nav class="primary-nav" aria-label="Navigasi utama">
         <a href="#menu" data-route="menu">Menu</a>
         <!-- store-only -->
-        <a href="#kontak" class="nav-contact icon-button" aria-label="Kontak" title="Kontak">
+        <a href="#kontak" class="nav-contact icon-button store-only" aria-label="Kontak" title="Kontak">
           <svg class="icon" aria-hidden="true"><use href="#i-contact"/></svg>
         </a>
         <!-- /store-only -->
@@ -100,7 +113,6 @@
     <div class="wrap footer-grid">
       <div>
         <a href="#atas" class="brand" data-route="home"><img src="./assets/logo.png" alt="Cakes Appeal" width="2048" height="682"></a>
-        <p>Menteng, Jakarta</p>
       </div>
       <div>
         <h2>Pemesanan</h2>
@@ -108,10 +120,10 @@
         <p>Kurir Kue, kurir online, atau ambil sendiri.</p>
       </div>
       <!-- store-only -->
-      <div>
+      <div class="store-only">
         <h2>Kontak</h2>
         <div class="contact-icons">
-          <a class="icon-button" id="whatsapp-contact" href="https://wa.me/628999909223" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Cakes Appeal" title="WhatsApp">
+          <a class="icon-button" id="whatsapp-contact" data-wa-url="https://wa.me/628999909223" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Cakes Appeal" title="WhatsApp">
             <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
           </a>
           <a class="icon-button" href="https://line.me/R/ti/p/~cakesappeal" target="_blank" rel="noopener noreferrer" aria-label="LINE Cakes Appeal" title="LINE">
@@ -126,7 +138,7 @@
     </div>
   </footer>
 
-  <nav class="dock motion-safe:before:transition-transform motion-safe:before:duration-300" data-active="home" aria-label="Navigasi cepat">
+  <nav class="dock motion-safe:before:transition-transform motion-safe:before:duration-500" data-active="home" aria-label="Navigasi cepat">
     <a href="#atas" data-route="home" aria-current="location"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Beranda</a>
     <a href="#menu" data-route="menu"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Menu</a>
     <button type="button" data-open-cart data-route="cart">
@@ -134,7 +146,7 @@
       Keranjang
     </button>
   </nav>
-  <div id="toast" class="toast" role="status" hidden>
+  <div id="toast" class="toast motion-safe:animate-toast-in" role="status" hidden>
     <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
     <span></span>
     <button type="button" class="text-button" data-open-cart>Lihat</button>
@@ -216,7 +228,7 @@
           <header class="sheet-heading">
             <h2 id="review-title" tabindex="-1">Ringkasan pesanan</h2>
             <p class="store-only-copy">Periksa item dan tanggal acara sebelum memesan.</p>
-            <p class="demo-only">Simulasi selesai. Cek pilihan dan estimasi pesananmu.</p>
+            <p class="demo-only">Cek pilihan dan estimasi sebelum mencoba pembelian.</p>
           </header>
           <ul id="review-items" class="review-items" aria-label="Item pesanan"></ul>
           <dl id="review-details" class="review-details"></dl>
@@ -224,15 +236,22 @@
         <div class="sheet-bar review-bar">
           <div class="estimate"><span>Total estimasi</span><output class="price" id="review-total"></output></div>
           <!-- store-only -->
-          <a class="button" id="submit-whatsapp" target="_blank" rel="noopener noreferrer">
-            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg> Pesan via WhatsApp
+          <a class="button purchase-button store-only" id="submit-whatsapp" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg><span class="purchase-label">Beli sekarang</span>
           </a>
           <!-- /store-only -->
-          <button class="button demo-only" id="finish-demo" type="button">Selesai</button>
+          <button class="button purchase-button demo-only" id="finish-demo" type="button">
+            <span class="purchase-label">Beli sekarang</span>
+          </button>
+          <p class="bar-note purchase-window" id="buy-window">
+            Aktif sampai <time datetime="2026-12-04T00:00:00+07:00">4 Desember · 00.00 WIB</time>
+            <span id="buy-countdown" role="timer"></span>
+          </p>
+          <p class="bar-note demo-only" id="demo-order-status" role="status" hidden>Simulasi pembelian selesai.</p>
           <p class="bar-note" id="review-shipping-note">Estimasi belum termasuk ongkir.</p>
           <button class="text-button review-edit" id="edit-order" type="button">Kembali ke keranjang</button>
           <!-- store-only -->
-          <button class="text-button review-copy" id="copy-order" type="button">Salin pesanan</button>
+          <button class="text-button review-copy store-only" id="copy-order" type="button">Salin pesanan</button>
           <!-- /store-only -->
           <p class="bar-note copy-status" id="copy-status" role="status"></p>
         </div>
